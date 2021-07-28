@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoviesWow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #423f3e;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 30px;
+        /* border: 1px solid red; */
+        background-color: #171010;
+        margin: 20px;
+        color: #bd4b4b;
+        font-size: 30px;
+      }
+      .header div {
+        font-size: 30px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .main {
+        background-color: #171010;
+        color: white;
+        display: grid;
+        grid-template-columns: 30% 65%;
+        gap: 5%;
+        margin: 30px;
+        padding: 30px;
+        height: 470px;
+      }
+
+      input {
+        width: 70%;
+        height: 40px;
+        text-align: center;
+        font-size: 20px;
+        border: none;
+        margin-bottom: 10px;
+      }
+      .right {
+        /* grid-template-columns: repeat(3, 30%); */
+        display: flex;
+        flex-flow: row wrap;
+        border: 5px dotted #423f3e;
+        padding: 20px;
+        text-align: center;
+        font-size: 17px;
+        justify-content: space-evenly;
+      }
+      .right .poster {
+        width: 34%;
+        /* border: 1px solid red; */
+      }
+      .right .details {
+        width: 60%;
+        display: flex;
+        flex-flow: column wrap;
+        justify-content: space-evenly;
+        /* border: 1px solid red; */
+      }
+      .right .title {
+        font-size: 30px;
+      }
+
+      .right .title span {
+        font-size: 25px;
+        font-weight: light;
+      }
+
+      .right span {
+        color: rgb(151, 149, 0);
+      }
+      .right div {
+        margin-bottom: 10px;
+      }
+
+      .left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 5px dotted #423f3e;
+        padding: 20px;
+        font-size: 25px;
+      }
+      .right img {
+        /* margin: 0 auto; */
+        width: 90%;
+        /* border: 2px dotted black; */
+        margin: 1%;
+        padding: 10px;
+        background-color: white;
+      }
+      button {
+        margin: 10px 9px;
+        background-color: #423f3e;
+        color: white;
+        padding: 4px 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 25px;
+        cursor: pointer;
+      }
+      #error {
+        width: 70%;
+      }
+      .recommend {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">MoviesWow!</div>
+    <!-- <div id="slideshow"></div> -->
+    <div class="main">
+      <div class="left">
+        <h3>Search For Your Movie</h3>
+
+        <input type="text" placeholder="Movie Name" id="input" />
+
+        <button class="order" onclick="searchMovie()">Search Movie!</button>
+      </div>
+      <div class="right" id="right"><h1>Search For Your Movie</h1></div>
+    </div>
+  </body>
+</html>
+
+<script>
+  async function searchMovie() {
+    let input = document.getElementById("input").value;
+
+    try {
+      let res = await fetch(
+        `http://www.omdbapi.com/?apikey=149c2146&t=${input}`
+      );
+      let data = await res.json();
+
+      let right = document.getElementById("right");
+
+      if (data.Response === "False") {
+        right.innerHTML = `<img
+          src="https://i2.wp.com/media3.giphy.com/media/i8rLMsiK6QJs4/giphy.gif"
+          id="error"
+        />`;
+        return;
+      }
+
+      if (data.imdbRating > 8.5) {
+        right.innerHTML = `<div class="poster">
+          <img src="${data.Poster}" alt="" />
+        </div>
+
+        <div class="details">
+          <div class="recommend">Recommended</div>
+          <div class="title">${data.Title} <span>(${data.Year})</span></div>
+
+          <div>${data.Plot}</div>
+          <div class="rating">
+            <span>IMDB Rating</span> : ${data.imdbRating} &#11088;
+          </div>
+          <div class="actors">
+            <span>Starring</span>: ${data.Actors}
+          </div>
+          <div><span>Language</span> : ${data.Language}</div>
+        </div>`;
+        return;
+      }
+
+      right.innerHTML = `<div class="poster">
+          <img src="${data.Poster}" alt="" />
+        </div>
+
+        <div class="details">
+          <div class="title">${data.Title} <span>(${data.Year})</span></div>
+
+          <div>${data.Plot}</div>
+          <div class="rating">
+            <span>IMDB Rating</span> : ${data.imdbRating} &#11088;
+          </div>
+          <div class="actors">
+            <span>Starring</span>: ${data.Actors}
+          </div>
+          <div><span>Language</span> : ${data.Language}</div>
+        </div>`;
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+</script>
